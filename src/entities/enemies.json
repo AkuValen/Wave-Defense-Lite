@@ -1,0 +1,26 @@
+[
+  {
+    "id": 1,
+    "name": "Weakling",
+    "hp": 10,
+    "speed": 2
+  },
+  {
+    "id": 2,
+    "name": "Roamer",
+    "hp": 15,
+    "speed": 4
+  },
+  {
+    "id": 3,
+    "name": "Swift",
+    "hp": 10,
+    "speed": 8
+  },
+  {
+    "id": 4,
+    "name": "Tank",
+    "hp": 30,
+    "speed": 2
+  }
+]

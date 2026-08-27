@@ -1,36 +1,31 @@
+import { configGameData } from "./core/assets.js";
+import { newMap, drawMap } from "./map/map.js";
+import { enemies, spawnEnemy, updateEnemies } from "./entities/enemy.js";
+
 const canvas = document.getElementById("game-canvas");
 const ctx = canvas.getContext("2d");
 
-import { newMap, drawMap, spawnpoint, basepoint } from "./map/map.js";
-
-// setCanvasArea();
-// window.addEventListener("resize", setCanvasArea);
-
-const gridNode = {
-  row: 10,
-  column: 10,
-};
-newMap(gridNode, canvas);
-
-// function setCanvasArea() {
-//   80% dari lebar device
-//   let maxWidth = window.innerWidth * 0.8;
-// }
-
-const enemy = {
-  pivotX: spawnpoint.pivotX,
-  pivotY: spawnpoint.pivotY,
-  size: 20,
-  speed: 1,
-  color: "#d06eb3",
-};
+let frameCounter = 0;
 
 function updateGame() {
-  enemy.pivotX += enemy.speed;
-
-  if (frameCounter % 60 == 0) {
-    console.log(enemy.pivotX, enemy.pivotY);
+  if (enemies.length <= 0) {
+    if (frameCounter % 60 == 0) console.log(`Tidak ada lawan saat ini`);
+    return;
   }
+
+  enemies.forEach((enemy, index) => {
+    enemy.pivotX += enemy.speed;
+
+    if (enemy.pivotX > canvas.width) {
+      enemy.hp = 0;
+    }
+
+    if (frameCounter % 60 == 0) {
+      console.log(`enemy${index + 1} pada x${enemy.pivotX}y${enemy.pivotY}`);
+    }
+  });
+
+  updateEnemies();
 }
 
 function renderGame() {
@@ -38,16 +33,17 @@ function renderGame() {
 
   drawMap(canvas);
 
-  ctx.fillStyle = enemy.color;
-  ctx.fillRect(
-    enemy.pivotX - enemy.size / 2,
-    enemy.pivotY - enemy.size / 2,
-    enemy.size,
-    enemy.size,
-  );
-}
+  if (enemies.length <= 0) {
+    return;
+  }
 
-let frameCounter = 0;
+  enemies.forEach((enemy) => {
+    ctx.fillStyle = enemy.color;
+    ctx.beginPath();
+    ctx.arc(enemy.pivotX, enemy.pivotY, enemy.size, 0, Math.PI * 2);
+    ctx.fill();
+  });
+}
 
 function gameLoop() {
   frameCounter++;
@@ -58,4 +54,15 @@ function gameLoop() {
   requestAnimationFrame(gameLoop);
 }
 
-gameLoop();
+function startGame() {
+  // newMap(gridNode, canvas);
+  newMap(canvas);
+
+  spawnEnemy();
+
+  gameLoop();
+}
+
+configGameData().then(() => {
+  startGame();
+});

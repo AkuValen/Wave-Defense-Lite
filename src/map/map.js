@@ -1,36 +1,57 @@
 // node (50 * 50)
 const nodeSize = 50;
 
-const node = {
-  row: 0,
-  column: 0,
-  isOccupied: false,
-  isSpawnpoint: false,
-  isBasepoint: false,
-  isOnlyPath: false,
-};
-
 export let mapGrid = [];
 export let spawnpoint;
 export let basepoint;
-let mapRows;
-let mapColumns;
+export const map = {
+  row: 10,
+  column: 10,
+};
 
-export function newMap(gridNode, canvas) {
-  mapRows = gridNode.row;
-  mapColumns = gridNode.column;
-
-  if (mapRows == null || mapColumns == null) {
-    console.error(`Map rows atau columns kosong pada map.js`);
-    return;
+// Breadth-First Search (BFS)
+function setScore() {
+  for (let r = 0; r < map.row; r++) {
+    for (let c = 0; c < map.column; c++) {
+      if (mapGrid[r] && mapGrid[r][c]) {
+        mapGrid[r][c].gScore = null;
+      }
+    }
   }
 
-  generateMap();
-  setSpawn();
-  setBase();
-  drawMap(canvas);
+  let openSet = [basepoint];
 
-  console.table(mapGrid);
+  basepoint.gScore = 0;
+
+  while (openSet.length > 0) {
+    const currentNode = openSet.reduce((lowestNode, node) => {
+      return node.gScore < lowestNode.gScore ? node : lowestNode;
+    }, openSet[0]);
+
+    openSet = openSet.filter((node) => node !== currentNode);
+
+    const neighborNode = [
+      { r: currentNode.row - 1, c: currentNode.column },
+      { r: currentNode.row, c: currentNode.column + 1 },
+      { r: currentNode.row + 1, c: currentNode.column },
+      { r: currentNode.row, c: currentNode.column - 1 },
+    ];
+
+    for (let n of neighborNode) {
+      if (n.r < 1 || n.r > map.row || n.c < 1 || n.c > map.column) {
+        continue;
+      }
+
+      const nNode = mapGrid[n.r - 1][n.c - 1];
+      if (nNode.gScore === null && !nNode.isOccupied) {
+        nNode.gScore = currentNode.gScore + 1;
+
+        if (!openSet.includes(nNode)) {
+          openSet.push(nNode);
+        }
+      }
+    }
+  }
 }
 
 function setSpawn() {
@@ -39,14 +60,11 @@ function setSpawn() {
   mapGrid[posR - 1][posC - 1] = {
     ...mapGrid[posR - 1][posC - 1],
     isSpawnpoint: true,
-  };
-
-  spawnpoint = {
-    row: posR,
-    column: posC,
     pivotX: nodeSize * posC - nodeSize / 2,
     pivotY: nodeSize * posR - nodeSize / 2,
   };
+
+  spawnpoint = mapGrid[posR - 1][posC - 1];
 
   console.log(`Spawn pada titik r${posR}c${posC}`);
 }
@@ -57,14 +75,11 @@ function setBase() {
   mapGrid[posR - 1][posC - 1] = {
     ...mapGrid[posR - 1][posC - 1],
     isBasepoint: true,
-  };
-
-  basepoint = {
-    row: posR,
-    column: posC,
     pivotX: nodeSize * posC - nodeSize / 2,
     pivotY: nodeSize * posR - nodeSize / 2,
   };
+
+  basepoint = mapGrid[posR - 1][posC - 1];
 
   console.log(`Base pada titik r${posR}c${posC}`);
 }
@@ -72,14 +87,9 @@ function setBase() {
 function randomPos() {
   let posR, posC;
 
-  // do {
-  //   posR = Math.floor(Math.random() * mapRows) + 1;
-  //   posC = Math.floor(Math.random() * mapColumns) + 1;
-  // } while (mapGrid[posR - 1][posC - 1].isSpawnpoint || mapGrid[posR - 1][posC - 1].isBasepoint);
-
   while (true) {
-    posR = Math.floor(Math.random() * mapRows) + 1;
-    posC = Math.floor(Math.random() * mapColumns) + 1;
+    posR = Math.floor(Math.random() * map.row) + 1;
+    posC = Math.floor(Math.random() * map.column) + 1;
 
     if (spawnpoint != null) {
       const deviationR = Math.abs(spawnpoint.row - posR);
@@ -96,12 +106,11 @@ function randomPos() {
 }
 
 function generateMap() {
-  for (let r = 0; r < mapRows; r++) {
+  for (let r = 0; r < map.row; r++) {
     mapGrid[r] = [];
 
-    for (let c = 0; c < mapColumns; c++) {
+    for (let c = 0; c < map.column; c++) {
       mapGrid[r][c] = {
-        ...node,
         row: r + 1,
         column: c + 1,
       };
@@ -115,16 +124,16 @@ export function drawMap(canvas) {
     return;
   }
 
-  canvas.height = mapRows * nodeSize;
-  canvas.width = mapColumns * nodeSize;
+  canvas.height = map.row * nodeSize;
+  canvas.width = map.column * nodeSize;
 
   const ctx = canvas.getContext("2d");
 
   ctx.fillStyle = "#d2d2d2";
   ctx.fillRect(0, 0, canvas.height, canvas.width);
 
-  for (let r = 0; r < mapRows; r++) {
-    for (let c = 0; c < mapColumns; c++) {
+  for (let r = 0; r < map.row; r++) {
+    for (let c = 0; c < map.column; c++) {
       const posX = c * nodeSize;
       const posY = r * nodeSize;
       const gap = 4;
@@ -139,4 +148,18 @@ export function drawMap(canvas) {
       ctx.fillRect(posX + gap / 2, posY + gap / 2, nodeSize - gap, nodeSize - gap);
     }
   }
+}
+
+export function newMap(canvas) {
+  generateMap();
+
+  setSpawn();
+  setBase();
+  setScore();
+
+  drawMap(canvas);
+
+  const printScore = mapGrid.map((row) => row.map((node) => node.gScore));
+  console.table(printScore);
+  // console.log(mapGrid);
 }

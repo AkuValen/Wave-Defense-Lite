@@ -1,5 +1,5 @@
 // node (50 * 50)
-const nodeSize = 50;
+export const nodeSize = 50;
 
 export let mapGrid = [];
 export let spawnpoint;
@@ -43,13 +43,14 @@ function setScore() {
       }
 
       const nNode = mapGrid[n.r - 1][n.c - 1];
-      if (nNode.gScore === null && !nNode.isOccupied) {
-        nNode.gScore = currentNode.gScore + 1;
 
-        if (!openSet.includes(nNode)) {
-          openSet.push(nNode);
-        }
+      if (nNode.gScore != null || nNode.isOccupied) {
+        continue;
       }
+
+      nNode.gScore = currentNode.gScore + 1;
+
+      openSet.push(nNode);
     }
   }
 }
@@ -150,7 +151,7 @@ export function drawMap(canvas) {
   }
 }
 
-export function newMap(canvas) {
+export async function newMap(canvas) {
   generateMap();
 
   setSpawn();
@@ -161,5 +162,4 @@ export function newMap(canvas) {
 
   const printScore = mapGrid.map((row) => row.map((node) => node.gScore));
   console.table(printScore);
-  // console.log(mapGrid);
 }

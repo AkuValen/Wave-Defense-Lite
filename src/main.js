@@ -1,31 +1,37 @@
 import { configGameData } from "./core/assets.js";
-import { newMap, drawMap } from "./map/map.js";
-import { enemies, spawnEnemy, updateEnemies } from "./entities/enemy.js";
+import { newMap, drawMap, nodeSize } from "./map/map.js";
+import { spawnEnemy } from "./entities/enemy.js";
 
 const canvas = document.getElementById("game-canvas");
 const ctx = canvas.getContext("2d");
 
+let activeEnemies = [];
+let activeTowers = [];
+
 let frameCounter = 0;
 
 function updateGame() {
-  if (enemies.length <= 0) {
+  if (activeEnemies.length <= 0) {
     if (frameCounter % 60 == 0) console.log(`Tidak ada lawan saat ini`);
     return;
   }
 
-  enemies.forEach((enemy, index) => {
-    enemy.pivotX += enemy.speed;
-
-    if (enemy.pivotX > canvas.width) {
-      enemy.hp = 0;
-    }
+  for (let enemy of activeEnemies) {
+    enemy.update();
 
     if (frameCounter % 60 == 0) {
-      console.log(`enemy${index + 1} pada x${enemy.pivotX}y${enemy.pivotY}`);
-    }
-  });
+      let enemyR = Math.ceil(enemy.pivotY / nodeSize);
+      let enemyC = Math.ceil(enemy.pivotX / nodeSize);
 
-  updateEnemies();
+      console.log(`Posisi musuh berada di r${enemyR}c${enemyC}`);
+    }
+  }
+
+  for (let tower of activeTowers) {
+    tower.shoot();
+  }
+
+  activeEnemies = activeEnemies.filter((enemy) => enemy.hp > 0);
 }
 
 function renderGame() {
@@ -33,16 +39,18 @@ function renderGame() {
 
   drawMap(canvas);
 
-  if (enemies.length <= 0) {
+  if (activeEnemies.length <= 0) {
     return;
   }
 
-  enemies.forEach((enemy) => {
+  for (let enemy of activeEnemies) {
     ctx.fillStyle = enemy.color;
+
     ctx.beginPath();
     ctx.arc(enemy.pivotX, enemy.pivotY, enemy.size, 0, Math.PI * 2);
+
     ctx.fill();
-  });
+  }
 }
 
 function gameLoop() {
@@ -58,7 +66,7 @@ function startGame() {
   // newMap(gridNode, canvas);
   newMap(canvas);
 
-  spawnEnemy();
+  spawnEnemy(activeEnemies);
 
   gameLoop();
 }

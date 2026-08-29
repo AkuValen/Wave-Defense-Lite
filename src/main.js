@@ -1,76 +1,92 @@
 import { configGameData } from "./core/assets.js";
-import { newMap, drawMap, nodeSize } from "./map/map.js";
-import { spawnEnemy } from "./entities/enemy.js";
+import { InputHandler } from "./core/input.js";
 
-const canvas = document.getElementById("game-canvas");
-const ctx = canvas.getContext("2d");
+import { newMap, drawMap } from "./map/map.js";
+import { spawnEnemy } from "./core/enemyManager.js";
 
-let activeEnemies = [];
-let activeTowers = [];
+class Game {
+  constructor() {
+    this.canvas = document.getElementById("game-canvas");
+    this.ctx = this.canvas.getContext("2d");
 
-let frameCounter = 0;
+    this.input = new InputHandler(this.canvas);
 
-function updateGame() {
-  if (activeEnemies.length <= 0) {
-    if (frameCounter % 60 == 0) console.log(`Tidak ada lawan saat ini`);
-    return;
+    this.config = configGameData();
+
+    this.mapData = {
+      row: 10,
+      column: 10,
+      nodeSize: 50,
+    };
+    this.mapGrid = [];
+
+    this.activeEnemies = [];
+    this.activeTowers = [];
+
+    this.frameCounter = 0;
+
+    this.start();
   }
 
-  for (let enemy of activeEnemies) {
-    enemy.update();
+  start() {
+    newMap(this);
 
-    if (frameCounter % 60 == 0) {
-      let enemyR = Math.ceil(enemy.pivotY / nodeSize);
-      let enemyC = Math.ceil(enemy.pivotX / nodeSize);
+    setTimeout(() => {
+      spawnEnemy(this);
+    }, 5000);
 
-      console.log(`Posisi musuh berada di r${enemyR}c${enemyC}`);
+    requestAnimationFrame(() => this.loop());
+  }
+
+  loop() {
+    this.frameCounter++;
+
+    if (this.frameCounter % 180 == 0) {
+      spawnEnemy(this);
+    }
+
+    this.update();
+    this.render();
+
+    requestAnimationFrame(() => this.loop());
+  }
+
+  update() {
+    if (this.activeEnemies.length <= 0) {
+      return;
+    }
+
+    for (let enemy of this.activeEnemies) {
+      enemy.update();
+    }
+
+    for (let tower of this.activeTowers) {
+      tower.shoot();
+    }
+
+    this.activeEnemies = this.activeEnemies.filter((enemy) => enemy.hp > 0);
+  }
+
+  render() {
+    this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+
+    drawMap(this);
+
+    if (this.activeEnemies.length <= 0) {
+      return;
+    }
+
+    for (let enemy of this.activeEnemies) {
+      this.ctx.fillStyle = enemy.color;
+
+      this.ctx.beginPath();
+      this.ctx.arc(enemy.pivotX, enemy.pivotY, enemy.size, 0, Math.PI * 2);
+
+      this.ctx.fill();
     }
   }
-
-  for (let tower of activeTowers) {
-    tower.shoot();
-  }
-
-  activeEnemies = activeEnemies.filter((enemy) => enemy.hp > 0);
 }
 
-function renderGame() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-  drawMap(canvas);
-
-  if (activeEnemies.length <= 0) {
-    return;
-  }
-
-  for (let enemy of activeEnemies) {
-    ctx.fillStyle = enemy.color;
-
-    ctx.beginPath();
-    ctx.arc(enemy.pivotX, enemy.pivotY, enemy.size, 0, Math.PI * 2);
-
-    ctx.fill();
-  }
-}
-
-function gameLoop() {
-  frameCounter++;
-
-  updateGame();
-  renderGame();
-
-  requestAnimationFrame(gameLoop);
-}
-
-function startGame() {
-  // newMap(gridNode, canvas);
-  newMap(canvas);
-
-  spawnEnemy(activeEnemies);
-
-  gameLoop();
-}
-
-configGameData().then(() => {
-  startGame();
+window.addEventListener("load", () => {
+  new Game();
 });

@@ -4,25 +4,29 @@
       "id": 1,
       "name": "Weakling",
       "hp": 10,
-      "speed": 2
+      "speed": 1,
+      "size": 15
     },
     {
       "id": 2,
       "name": "Roamer",
       "hp": 15,
-      "speed": 4
+      "speed": 2,
+      "size": 15
     },
     {
       "id": 3,
       "name": "Swift",
       "hp": 10,
-      "speed": 8
+      "speed": 4,
+      "size": 12
     },
     {
       "id": 4,
       "name": "Tank",
-      "hp": 30,
-      "speed": 2
+      "hp": 40,
+      "speed": 0.8,
+      "size": 20
     }
   ]
 }

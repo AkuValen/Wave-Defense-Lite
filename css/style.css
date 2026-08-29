@@ -79,3 +79,17 @@ canvas {
 .gold {
   font-size: 25px;
 }
+
+.control-area ul {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding-top: 10px;
+}
+.control-area div {
+  background-color: aquamarine;
+
+  height: 100px;
+  cursor: grab;
+}

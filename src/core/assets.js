@@ -5,9 +5,10 @@ export async function configGameData() {
     const response = await fetch("assets/data/enemies.json");
     const data = await response.json();
 
-    console.log("Berhasil mengunduh data enemies.json");
     enemyData = data.enemies;
+
+    console.log(`Berhasil mengunduh ${enemyData.length} data enemies.json`);
   } catch (error) {
-    console.error("Gagal mengunduh data enemies.json pada assets.js");
+    console.error(`Gagal mengunduh data enemies.json pada assets.js`);
   }
 }

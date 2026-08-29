@@ -1,24 +1,19 @@
-// node (50 * 50)
-export const nodeSize = 50;
-
-export let mapGrid = [];
-export let spawnpoint;
-export let basepoint;
-export const map = {
-  row: 10,
-  column: 10,
-};
-
 // Breadth-First Search (BFS)
-function setScore() {
-  for (let r = 0; r < map.row; r++) {
-    for (let c = 0; c < map.column; c++) {
+function setScore(game) {
+  const row = game.mapData.row;
+  const column = game.mapData.column;
+
+  const mapGrid = game.mapGrid;
+
+  for (let r = 0; r < row; r++) {
+    for (let c = 0; c < column; c++) {
       if (mapGrid[r] && mapGrid[r][c]) {
         mapGrid[r][c].gScore = null;
       }
     }
   }
 
+  const basepoint = game.mapData.basepoint;
   let openSet = [basepoint];
 
   basepoint.gScore = 0;
@@ -38,7 +33,7 @@ function setScore() {
     ];
 
     for (let n of neighborNode) {
-      if (n.r < 1 || n.r > map.row || n.c < 1 || n.c > map.column) {
+      if (n.r < 1 || n.r > row || n.c < 1 || n.c > column) {
         continue;
       }
 
@@ -55,8 +50,11 @@ function setScore() {
   }
 }
 
-function setSpawn() {
-  const [posR, posC] = randomPos();
+function setSpawn(game) {
+  const [posR, posC] = randomPos(game);
+
+  const nodeSize = game.mapData.nodeSize;
+  const mapGrid = game.mapGrid;
 
   mapGrid[posR - 1][posC - 1] = {
     ...mapGrid[posR - 1][posC - 1],
@@ -65,13 +63,17 @@ function setSpawn() {
     pivotY: nodeSize * posR - nodeSize / 2,
   };
 
-  spawnpoint = mapGrid[posR - 1][posC - 1];
+  const mapData = game.mapData;
+  mapData.spawnpoint = mapGrid[posR - 1][posC - 1];
 
   console.log(`Spawn pada titik r${posR}c${posC}`);
 }
 
-function setBase() {
-  const [posR, posC] = randomPos();
+function setBase(game) {
+  const [posR, posC] = randomPos(game);
+
+  const nodeSize = game.mapData.nodeSize;
+  const mapGrid = game.mapGrid;
 
   mapGrid[posR - 1][posC - 1] = {
     ...mapGrid[posR - 1][posC - 1],
@@ -80,17 +82,23 @@ function setBase() {
     pivotY: nodeSize * posR - nodeSize / 2,
   };
 
-  basepoint = mapGrid[posR - 1][posC - 1];
+  const mapData = game.mapData;
+  mapData.basepoint = mapGrid[posR - 1][posC - 1];
 
   console.log(`Base pada titik r${posR}c${posC}`);
 }
 
-function randomPos() {
+function randomPos(game) {
   let posR, posC;
 
+  const row = game.mapData.row;
+  const column = game.mapData.column;
+
   while (true) {
-    posR = Math.floor(Math.random() * map.row) + 1;
-    posC = Math.floor(Math.random() * map.column) + 1;
+    posR = Math.floor(Math.random() * row) + 1;
+    posC = Math.floor(Math.random() * column) + 1;
+
+    const spawnpoint = game.mapData.spawnpoint;
 
     if (spawnpoint != null) {
       const deviationR = Math.abs(spawnpoint.row - posR);
@@ -106,11 +114,16 @@ function randomPos() {
   return [posR, posC];
 }
 
-function generateMap() {
-  for (let r = 0; r < map.row; r++) {
+function generateMap(game) {
+  const row = game.mapData.row;
+  const column = game.mapData.column;
+
+  const mapGrid = game.mapGrid;
+
+  for (let r = 0; r < row; r++) {
     mapGrid[r] = [];
 
-    for (let c = 0; c < map.column; c++) {
+    for (let c = 0; c < column; c++) {
       mapGrid[r][c] = {
         row: r + 1,
         column: c + 1,
@@ -119,22 +132,24 @@ function generateMap() {
   }
 }
 
-export function drawMap(canvas) {
-  if (canvas == null) {
-    console.error(`Canvas kosong pada map.js`);
-    return;
-  }
+export function drawMap(game) {
+  const canvas = game.canvas;
+  const ctx = game.ctx;
 
-  canvas.height = map.row * nodeSize;
-  canvas.width = map.column * nodeSize;
+  const row = game.mapData.row;
+  const column = game.mapData.column;
+  const nodeSize = game.mapData.nodeSize;
 
-  const ctx = canvas.getContext("2d");
+  canvas.height = row * nodeSize;
+  canvas.width = column * nodeSize;
 
   ctx.fillStyle = "#d2d2d2";
   ctx.fillRect(0, 0, canvas.height, canvas.width);
 
-  for (let r = 0; r < map.row; r++) {
-    for (let c = 0; c < map.column; c++) {
+  const mapGrid = game.mapGrid;
+
+  for (let r = 0; r < row; r++) {
+    for (let c = 0; c < column; c++) {
       const posX = c * nodeSize;
       const posY = r * nodeSize;
       const gap = 4;
@@ -151,15 +166,12 @@ export function drawMap(canvas) {
   }
 }
 
-export async function newMap(canvas) {
-  generateMap();
+export async function newMap(game) {
+  generateMap(game);
 
-  setSpawn();
-  setBase();
-  setScore();
+  setSpawn(game);
+  setBase(game);
+  setScore(game);
 
-  drawMap(canvas);
-
-  const printScore = mapGrid.map((row) => row.map((node) => node.gScore));
-  console.table(printScore);
+  drawMap(game);
 }

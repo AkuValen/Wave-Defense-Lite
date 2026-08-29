@@ -1,9 +1,7 @@
-import { nodeSize, map, mapGrid, spawnpoint, basepoint } from "../map/map.js";
-
-export let enemies = [];
-
 export class Enemy {
-  constructor(data) {
+  constructor(game, data) {
+    this.game = game;
+
     this.hp = data.hp;
     this.speed = data.speed;
 
@@ -13,7 +11,7 @@ export class Enemy {
     this.pivotX = data.pivotX;
     this.pivotY = data.pivotY;
 
-    this.nextNode = "";
+    this.nextNode;
 
     this.findNextNode();
   }
@@ -23,8 +21,10 @@ export class Enemy {
   }
 
   findNextNode() {
-    const currentR = Math.ceil(this.pivotY / nodeSize);
-    const currentC = Math.ceil(this.pivotX / nodeSize);
+    const mapGrid = this.game.mapGrid;
+
+    const currentR = Math.ceil(this.pivotY / this.game.mapData.nodeSize);
+    const currentC = Math.ceil(this.pivotX / this.game.mapData.nodeSize);
     const currentNode = mapGrid[currentR - 1][currentC - 1];
 
     const neighborNode = [
@@ -36,8 +36,11 @@ export class Enemy {
 
     let nNode = [];
 
+    const row = this.game.mapData.row;
+    const column = this.game.mapData.column;
+
     for (let n of neighborNode) {
-      if (n.r < 1 || n.r > map.row || n.c < 1 || n.c > map.column) {
+      if (n.r < 1 || n.r > row || n.c < 1 || n.c > column) {
         continue;
       }
 
@@ -53,14 +56,27 @@ export class Enemy {
 
   move() {
     if (!this.nextNode) {
-      return;
+      this.findNextNode();
     }
+
+    const nodeSize = this.game.mapData.nodeSize;
 
     const targetPivotX = this.nextNode.column * nodeSize - nodeSize / 2;
     const targetPivotY = this.nextNode.row * nodeSize - nodeSize / 2;
 
-    this.pivotX += Math.sign(targetPivotX - this.pivotX) * this.speed;
-    this.pivotY += Math.sign(targetPivotY - this.pivotY) * this.speed;
+    const xPixToNext = Math.abs(targetPivotX - this.pivotX);
+    const yPixToNext = Math.abs(targetPivotY - this.pivotY);
+
+    if (xPixToNext < this.speed) {
+      this.pivotX = targetPivotX;
+    } else {
+      this.pivotX += Math.sign(targetPivotX - this.pivotX) * this.speed;
+    }
+    if (yPixToNext < this.speed) {
+      this.pivotY = targetPivotY;
+    } else {
+      this.pivotY += Math.sign(targetPivotY - this.pivotY) * this.speed;
+    }
 
     if (this.pivotX == targetPivotX && this.pivotY == targetPivotY) {
       this.findNextNode();
@@ -68,25 +84,12 @@ export class Enemy {
   }
 
   update() {
+    const basepoint = this.game.mapData.basepoint;
+
     if (this.pivotX === basepoint.pivotX && this.pivotY === basepoint.pivotY) {
       this.destroy();
       return;
     }
     this.move();
   }
-}
-
-export function spawnEnemy(activeEnemies) {
-  activeEnemies.push(
-    new Enemy({
-      pivotX: spawnpoint.pivotX,
-      pivotY: spawnpoint.pivotY,
-      hp: 10,
-      size: 15,
-      speed: 1,
-      color: "#d06eb3",
-    }),
-  );
-
-  console.log(spawnpoint);
 }

@@ -9,7 +9,7 @@ class Game {
     this.canvas = document.getElementById("game-canvas");
     this.ctx = this.canvas.getContext("2d");
 
-    this.input = new InputHandler(this.canvas);
+    this.input = new InputHandler(this);
 
     this.config = configGameData();
 
@@ -22,6 +22,8 @@ class Game {
 
     this.activeEnemies = [];
     this.activeTowers = [];
+
+    this.isPlacementMode = null;
 
     this.frameCounter = 0;
 

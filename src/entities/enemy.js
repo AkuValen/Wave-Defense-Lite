@@ -3,7 +3,7 @@ export class Enemy {
     this.game = game;
 
     this.hp = data.hp;
-    this.speed = data.speed;
+    this.speed = data.speed;  
 
     this.size = data.size;
     this.color = data.color;

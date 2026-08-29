@@ -9,7 +9,7 @@ export function spawnEnemy(game) {
 
   const spawnpoint = game.mapData.spawnpoint;
 
-  console.log(spawnpoint);
+  //   console.log(spawnpoint);
 
   activeEnemies.push(
     new Enemy(game, {

@@ -46,11 +46,8 @@ export class InputHandler {
       const x = e.clientX - rect.left;
       const y = e.clientY - rect.top;
 
-      const nodeR = Math.ceil(y / 50);
-      const nodeC = Math.ceil(x / 50);
-
       if (this.clickEvent) {
-        this.clickEvent({ isSelectNode: true, nodeR, nodeC });
+        this.clickEvent({ isSelectNode: true, x, y });
       }
     });
 

@@ -53,14 +53,11 @@ function setScore(game) {
 function setSpawn(game) {
   const [posR, posC] = randomPos(game);
 
-  const nodeSize = game.mapData.nodeSize;
   const mapGrid = game.mapGrid;
 
   mapGrid[posR - 1][posC - 1] = {
     ...mapGrid[posR - 1][posC - 1],
     isSpawnpoint: true,
-    pivotX: nodeSize * posC - nodeSize / 2,
-    pivotY: nodeSize * posR - nodeSize / 2,
   };
 
   const mapData = game.mapData;
@@ -72,14 +69,11 @@ function setSpawn(game) {
 function setBase(game) {
   const [posR, posC] = randomPos(game);
 
-  const nodeSize = game.mapData.nodeSize;
   const mapGrid = game.mapGrid;
 
   mapGrid[posR - 1][posC - 1] = {
     ...mapGrid[posR - 1][posC - 1],
     isBasepoint: true,
-    pivotX: nodeSize * posC - nodeSize / 2,
-    pivotY: nodeSize * posR - nodeSize / 2,
   };
 
   const mapData = game.mapData;
@@ -101,11 +95,11 @@ function randomPos(game) {
     const spawnpoint = game.mapData.spawnpoint;
 
     if (spawnpoint != null) {
-      const deviationR = Math.abs(spawnpoint.row - posR);
-      const deviationC = Math.abs(spawnpoint.column - posC);
-      const totalDeviation = deviationR + deviationC;
+      const diffR = Math.abs(spawnpoint.row - posR);
+      const diffC = Math.abs(spawnpoint.column - posC);
+      const gridDistance = diffR + diffC;
 
-      if (totalDeviation <= 2) continue;
+      if (gridDistance <= 2) continue;
     }
 
     break;
@@ -119,6 +113,7 @@ function generateMap(game) {
   const column = game.mapData.column;
 
   const mapGrid = game.mapGrid;
+  const nodeSize = game.mapData.nodeSize;
 
   for (let r = 0; r < row; r++) {
     mapGrid[r] = [];
@@ -127,6 +122,8 @@ function generateMap(game) {
       mapGrid[r][c] = {
         row: r + 1,
         column: c + 1,
+        pivotX: nodeSize * c + nodeSize / 2,
+        pivotY: nodeSize * r + nodeSize / 2,
       };
     }
   }
@@ -166,7 +163,11 @@ export function drawMap(game) {
   }
 }
 
-export async function newMap(game) {
+export function updateMapScore(game) {
+  setScore(game);
+}
+
+export function newMap(game) {
   generateMap(game);
 
   setSpawn(game);

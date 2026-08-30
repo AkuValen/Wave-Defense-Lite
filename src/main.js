@@ -1,8 +1,9 @@
 import { configGameData } from "./core/assets.js";
 import { InputHandler } from "./core/input.js";
 
-import { newMap, drawMap } from "./map/map.js";
+import { newMap, drawMap, updateMapScore } from "./map/map.js";
 import { spawnEnemy } from "./core/enemyManager.js";
+import { buildTower, selectTower, cancelBuild } from "./core/towerManager.js";
 
 class Game {
   constructor() {
@@ -25,30 +26,48 @@ class Game {
 
     this.isPlacementMode = null;
 
+    this.player = {
+      heart: 0,
+      gold: 10,
+    };
+
     this.frameCounter = 0;
+    this.waveCounter = 0;
 
     this.start();
   }
 
   click(clickEvent) {
-    console.log("Event: ", clickEvent);
-
     if (clickEvent.isSelectTower) {
-      const indexTower = clickEvent.index;
+      const index = clickEvent.index;
 
-      console.log(`Tower ${indexTower + 1} ter-click`);
+      console.log(`Tower ${index + 1} ter-click`);
+
+      selectTower(this, index);
     }
 
     if (clickEvent.isSelectNode) {
-      const node = {
-        row: clickEvent.nodeR,
-        column: clickEvent.nodeC,
-      };
+      const row = Math.ceil(clickEvent.y / this.mapData.nodeSize);
+      const column = Math.ceil(clickEvent.x / this.mapData.nodeSize);
+
+      const node = this.mapGrid[row - 1][column - 1];
 
       console.log(`Node click r${node.row}c${node.column}`);
+      console.log(node);
+
+      if (this.isPlacementMode) {
+        buildTower(this, node);
+        updateMapScore(this);
+
+        const printScore = this.mapGrid.map((row) => row.map((node) => node.gScore));
+        console.table(printScore);
+      }
     }
 
     if (clickEvent.isSelectNone) {
+      if (this.isPlacementMode) {
+        cancelBuild(this);
+      }
     }
   }
 
@@ -76,16 +95,12 @@ class Game {
   }
 
   update() {
-    if (this.activeEnemies.length <= 0) {
-      return;
-    }
-
     for (let enemy of this.activeEnemies) {
       enemy.update();
     }
 
     for (let tower of this.activeTowers) {
-      tower.shoot();
+      tower.update();
     }
 
     this.activeEnemies = this.activeEnemies.filter((enemy) => enemy.hp > 0);
@@ -96,10 +111,6 @@ class Game {
 
     drawMap(this);
 
-    if (this.activeEnemies.length <= 0) {
-      return;
-    }
-
     for (let enemy of this.activeEnemies) {
       this.ctx.fillStyle = enemy.color;
 
@@ -107,6 +118,27 @@ class Game {
       this.ctx.arc(enemy.pivotX, enemy.pivotY, enemy.size, 0, Math.PI * 2);
 
       this.ctx.fill();
+    }
+
+    for (let tower of this.activeTowers) {
+      this.ctx.save();
+
+      this.ctx.translate(tower.pivotX, tower.pivotY);
+
+      if (tower.target) {
+        const diffX = tower.target.pivotX - tower.pivotX;
+        const diffY = tower.target.pivotY - tower.pivotY;
+
+        tower.angle = Math.atan2(diffY, diffX) + Math.PI / 2;
+      }
+
+      this.ctx.rotate(tower.angle);
+
+      const towerSize = 40;
+
+      this.ctx.drawImage(tower.image, -towerSize / 2, -towerSize / 2, towerSize, towerSize);
+
+      this.ctx.restore();
     }
   }
 }

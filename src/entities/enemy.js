@@ -1,15 +1,15 @@
 export class Enemy {
-  constructor(game, data) {
+  constructor(game, enemyData, spawnpoint) {
     this.game = game;
 
-    this.hp = data.hp;
-    this.speed = data.speed;  
+    this.hp = enemyData.hp;
+    this.speed = enemyData.speed;
 
-    this.size = data.size;
-    this.color = data.color;
+    this.size = enemyData.size;
+    this.color = enemyData.color;
 
-    this.pivotX = data.pivotX;
-    this.pivotY = data.pivotY;
+    this.pivotX = spawnpoint.pivotX;
+    this.pivotY = spawnpoint.pivotY;
 
     this.nextNode;
 
@@ -41,6 +41,9 @@ export class Enemy {
 
     for (let n of neighborNode) {
       if (n.r < 1 || n.r > row || n.c < 1 || n.c > column) {
+        continue;
+      }
+      if (mapGrid[n.r - 1][n.c - 1].isOccupied) {
         continue;
       }
 

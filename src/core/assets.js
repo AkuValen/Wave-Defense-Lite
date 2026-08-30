@@ -1,6 +1,29 @@
 export let enemyData;
+export let towerData;
 
-export async function configGameData() {
+async function fetchTower() {
+  try {
+    const response = await fetch("assets/data/towers.json");
+    const data = await response.json();
+
+    towerData = data.towers;
+
+    let tCounter = 0;
+
+    for (let d of towerData) {
+      tCounter++;
+
+      d.image = new Image();
+      d.image.src = "../../assets/img/" + d.texture;
+    }
+
+    console.log(`Berhasil mengunduh ${towerData.length} data dan ${tCounter} texture towers.json`);
+  } catch (error) {
+    console.error(`Gagal mengunduh data towers.json pada assets.js`);
+  }
+}
+
+async function fetchEnemy() {
   try {
     const response = await fetch("assets/data/enemies.json");
     const data = await response.json();
@@ -11,4 +34,9 @@ export async function configGameData() {
   } catch (error) {
     console.error(`Gagal mengunduh data enemies.json pada assets.js`);
   }
+}
+
+export async function configGameData() {
+  await fetchEnemy();
+  await fetchTower();
 }

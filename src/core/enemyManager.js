@@ -1,5 +1,5 @@
 import { Enemy } from "../entities/enemy.js";
-import { enemyData } from "../core/assets.js";
+import { enemyData } from "./assets.js";
 
 export function spawnEnemy(game) {
   const activeEnemies = game.activeEnemies;
@@ -9,16 +9,5 @@ export function spawnEnemy(game) {
 
   const spawnpoint = game.mapData.spawnpoint;
 
-  //   console.log(spawnpoint);
-
-  activeEnemies.push(
-    new Enemy(game, {
-      pivotX: spawnpoint.pivotX,
-      pivotY: spawnpoint.pivotY,
-      hp: randEnemy.hp,
-      size: randEnemy.size,
-      speed: randEnemy.speed,
-      color: "#d06eb3",
-    }),
-  );
+  activeEnemies.push(new Enemy(game, randEnemy, spawnpoint));
 }

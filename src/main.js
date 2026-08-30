@@ -9,7 +9,7 @@ class Game {
     this.canvas = document.getElementById("game-canvas");
     this.ctx = this.canvas.getContext("2d");
 
-    this.input = new InputHandler(this);
+    this.input = new InputHandler(this, (clickEvent) => this.click(clickEvent));
 
     this.config = configGameData();
 
@@ -28,6 +28,28 @@ class Game {
     this.frameCounter = 0;
 
     this.start();
+  }
+
+  click(clickEvent) {
+    console.log("Event: ", clickEvent);
+
+    if (clickEvent.isSelectTower) {
+      const indexTower = clickEvent.index;
+
+      console.log(`Tower ${indexTower + 1} ter-click`);
+    }
+
+    if (clickEvent.isSelectNode) {
+      const node = {
+        row: clickEvent.nodeR,
+        column: clickEvent.nodeC,
+      };
+
+      console.log(`Node click r${node.row}c${node.column}`);
+    }
+
+    if (clickEvent.isSelectNone) {
+    }
   }
 
   start() {

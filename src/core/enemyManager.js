@@ -14,17 +14,6 @@ export function renderEnemy(game, ctx) {
   });
 }
 
-export function spawnEnemy(game) {
-  const activeEnemies = game.activeEnemies;
-
-  const randI = Math.floor(Math.random() * enemyData.length);
-  const randEnemy = enemyData[randI];
-
-  const spawnpoint = game.mapData.spawnpoint;
-
-  game.activeEnemies.push(new Enemy(game, randEnemy, spawnpoint));
-}
-
 function findNextNode(game, enemy) {
   const mapData = game.mapData;
   const mapGrid = game.mapGrid;
@@ -62,13 +51,48 @@ function findNextNode(game, enemy) {
 
   const nextNode = nNode[Math.floor(Math.random() * nNode.length)];
 
-  // enemy.setNextNode(nextNode);
   enemy.nextNode = nextNode;
 }
 
-export function updateEnemy(game) {
+let spawnCooldown;
+let spawnRateEnemy;
+
+export function spawnEnemy(game) {
   const activeEnemies = game.activeEnemies;
+
+  const randIndex = Math.floor(Math.random());
+
+  let i = 0;
+
+  const spawnRateValue = Object.values(spawnRateEnemy);
+  for (const rate of spawnRateValue) {
+    if (randIndex <= rate) break;
+
+    i++;
+  }
+
+  const spawnpoint = game.mapData.spawnpoint;
+
+  const newEnemyData = enemyData[i];
+
+  activeEnemies.push(new Enemy(game, newEnemyData, spawnpoint));
+}
+
+export function updateEnemy(game) {
+  let activeEnemies = game.activeEnemies;
   const basepoint = game.mapData.basepoint;
+
+  if (game.time.tick) {
+    spawnCooldown--;
+
+    if (spawnCooldown <= 0) {
+      spawnEnemy(game);
+      console.log("Spawn lalu cooldown");
+      spawnCooldown = game.level.spawnInterval;
+    }
+  }
+
+  // if (activeEnemies.length <= 0) return;
 
   activeEnemies.forEach((enemy) => {
     if (!enemy.nextNode) {
@@ -82,5 +106,23 @@ export function updateEnemy(game) {
     }
   });
 
-  game.activeEnemies = game.activeEnemies.filter((enemy) => enemy.hp > 0);
+  game.activeEnemies = activeEnemies.filter((enemy) => enemy.hp > 0);
+}
+
+export function setEnemy(game) {
+  spawnCooldown = 3;
+
+  let totalRate = 0;
+  Object.values(game.level.spawnRateVariant).forEach((value) => {
+    totalRate += value;
+  });
+
+  spawnRateEnemy = {
+    weakling: game.level.spawnRateVariant.weakling / totalRate,
+    roamer: game.level.spawnRateVariant.roamer / totalRate,
+    swift: game.level.spawnRateVariant.swift / totalRate,
+    tank: game.level.spawnRateVariant.tank / totalRate,
+  };
+
+  console.log("Spawnrate: ", spawnRateEnemy);
 }

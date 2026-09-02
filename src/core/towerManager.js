@@ -37,8 +37,7 @@ function updateBullet(game, tower) {
       return getDistance(enemy, bullet) < getDistance(closest, bullet) ? enemy : closest;
     });
 
-    const isCollision =
-      getDistance(closestEnemy, bullet) <= closestEnemy.size / 2 + bullet.size / 2;
+    const isCollision = getDistance(closestEnemy, bullet) <= closestEnemy.size + bullet.size / 2;
 
     if (isCollision) {
       closestEnemy.takeDamage(bullet);

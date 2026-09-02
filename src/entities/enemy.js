@@ -19,9 +19,6 @@ export class Enemy {
   }
 
   move() {
-    // const targetPivotX = this.nextNode.column * nodeSize - nodeSize / 2;
-    // const targetPivotY = this.nextNode.row * nodeSize - nodeSize / 2;
-
     const deltaX = Math.abs(this.nextNode.pivotX - this.pivotX);
     const deltaY = Math.abs(this.nextNode.pivotY - this.pivotY);
 

@@ -37,7 +37,7 @@ export class Tower {
       }),
     );
 
-    this.cooldown -= this.firerate;
+    this.cooldown += this.firerate;
 
     if (this.game.time.tick) console.log(this.bullets);
   }

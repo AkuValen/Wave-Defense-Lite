@@ -40,6 +40,9 @@ canvas {
   display: flex;
   align-items: center;
 }
+.status-area h1 {
+  font-size: 30px;
+}
 
 .wave-area {
   margin-left: 35px;
@@ -47,9 +50,6 @@ canvas {
   display: flex;
   flex-direction: column;
   /* background-color: aqua; */
-}
-.wave {
-  font-size: 35px;
 }
 .wave-counter {
   font-size: 25px;
@@ -72,12 +72,6 @@ canvas {
 }
 .resource-area div {
   width: 85px;
-}
-.hp {
-  font-size: 35px;
-}
-.gold {
-  font-size: 25px;
 }
 
 .control-area ul {

@@ -2,7 +2,7 @@ import { configGameData } from "./core/assets.js";
 import { InputHandler } from "./core/input.js";
 
 import { newMap, renderMap, updateMapScore } from "./map/map.js";
-import { updateEnemy, renderEnemy, spawnEnemy } from "./core/enemyManager.js";
+import { updateEnemy, renderEnemy, spawnEnemy, setEnemy } from "./core/enemyManager.js";
 import {
   buildTower,
   selectTower,
@@ -10,6 +10,8 @@ import {
   updateTower,
   renderTower,
 } from "./core/towerManager.js";
+
+import { printUi } from "./core/display.js";
 
 class Game {
   constructor() {
@@ -26,8 +28,22 @@ class Game {
     this.mapGrid = [];
 
     this.player = {
-      heart: 0,
+      heart: 3,
       gold: 10,
+    };
+
+    this.level = {
+      spawnRateVariant: {
+        weakling: 1,
+        roamer: 0,
+        swift: 0,
+        tank: 0,
+      },
+      spawnInterval: 5,
+      maxSpawn: 3,
+      spawnCount: 0,
+      wave: 0,
+      waveCleared: true,
     };
 
     this.time = {
@@ -36,7 +52,6 @@ class Game {
       lasttime: 0,
       accumulator: 0,
     };
-    this.waveCounter = 0;
 
     this.activeEnemies = [];
     this.activeTowers = [];
@@ -111,6 +126,8 @@ class Game {
   }
 
   render() {
+    printUi(this);
+
     const ctx = this.canvas.getContext("2d");
     ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
@@ -125,15 +142,29 @@ class Game {
     updateTower(this);
   }
 
+  setLevel() {
+    this.level.waveCleared = false;
+
+    this.level.wave++;
+    this.level.spawnCount = 0;
+  }
+
   loop(timestamp) {
     this.timeCounter(timestamp);
 
-    if (this.frameCounter % 180 == 0) {
-      spawnEnemy(this);
+    if (this.level.waveCleared) {
+      this.setLevel();
+      setEnemy(this);
     }
 
     this.update();
     this.render();
+
+    if (this.activeEnemies.length <= 0 && this.level.spawnCount == this.level.maxSpawn) {
+      this.level.waveCleared = true;
+
+      this.player.gold = this.level.maxSpawn * 2 + this.level.wave;
+    }
 
     if (!this.input.isFocus) {
       cancelAnimationFrame(this.loopId);
@@ -145,10 +176,6 @@ class Game {
   start() {
     const ctx = this.canvas.getContext("2d");
     newMap(this, ctx);
-
-    setTimeout(() => {
-      spawnEnemy(this);
-    }, 5000);
 
     this.loopId = requestAnimationFrame((timestamp) => this.loop(timestamp));
   }

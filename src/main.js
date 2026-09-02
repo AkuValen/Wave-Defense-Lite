@@ -14,10 +14,9 @@ import {
 class Game {
   constructor() {
     this.canvas = document.getElementById("game-canvas");
-
     this.input = new InputHandler(this, (clickEvent) => this.click(clickEvent));
-
     this.config = configGameData();
+    this.loopId;
 
     this.mapData = {
       row: 10,
@@ -25,11 +24,6 @@ class Game {
       nodeSize: 50,
     };
     this.mapGrid = [];
-
-    this.activeEnemies = [];
-    this.activeTowers = [];
-
-    this.isPlacementMode = null;
 
     this.player = {
       heart: 0,
@@ -44,7 +38,23 @@ class Game {
     };
     this.waveCounter = 0;
 
+    this.activeEnemies = [];
+    this.activeTowers = [];
+
+    this.isPlacementMode = null;
+
     this.start();
+  }
+
+  resume() {
+    if (this.loopId) {
+      cancelAnimationFrame(this.loopId);
+    }
+
+    this.loopId = requestAnimationFrame((timestamp) => {
+      this.time.lasttime = timestamp;
+      return this.loop(timestamp);
+    });
   }
 
   click(clickEvent) {
@@ -125,7 +135,11 @@ class Game {
     this.update();
     this.render();
 
-    requestAnimationFrame((timestamp) => this.loop(timestamp));
+    if (!this.input.isFocus) {
+      cancelAnimationFrame(this.loopId);
+    } else {
+      this.loopId = requestAnimationFrame((timestamp) => this.loop(timestamp));
+    }
   }
 
   start() {
@@ -136,7 +150,7 @@ class Game {
       spawnEnemy(this);
     }, 5000);
 
-    requestAnimationFrame((timestamp) => this.loop(timestamp));
+    this.loopId = requestAnimationFrame((timestamp) => this.loop(timestamp));
   }
 }
 

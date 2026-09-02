@@ -36,7 +36,12 @@ class Game {
       gold: 10,
     };
 
-    this.frameCounter = 0;
+    this.time = {
+      tick: false,
+      second: 0,
+      lasttime: 0,
+      accumulator: 0,
+    };
     this.waveCounter = 0;
 
     this.start();
@@ -76,6 +81,25 @@ class Game {
     }
   }
 
+  timeCounter(timestamp) {
+    if (this.lasttime <= 0) this.time.lasttime = timestamp;
+    let deltaT = timestamp - this.time.lasttime;
+
+    this.time.accumulator += deltaT;
+
+    if (this.time.accumulator >= 1000) {
+      this.time.accumulator -= 1000;
+
+      this.time.second++;
+      this.time.tick = true;
+      console.log(this.time.second);
+    } else {
+      this.time.tick = false;
+    }
+
+    this.time.lasttime = timestamp;
+  }
+
   render() {
     const ctx = this.canvas.getContext("2d");
     ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
@@ -91,8 +115,8 @@ class Game {
     updateTower(this);
   }
 
-  loop() {
-    this.frameCounter++;
+  loop(timestamp) {
+    this.timeCounter(timestamp);
 
     if (this.frameCounter % 180 == 0) {
       spawnEnemy(this);
@@ -101,7 +125,7 @@ class Game {
     this.update();
     this.render();
 
-    requestAnimationFrame(() => this.loop());
+    requestAnimationFrame((timestamp) => this.loop(timestamp));
   }
 
   start() {
@@ -112,7 +136,7 @@ class Game {
       spawnEnemy(this);
     }, 5000);
 
-    requestAnimationFrame(() => this.loop());
+    requestAnimationFrame((timestamp) => this.loop(timestamp));
   }
 }
 

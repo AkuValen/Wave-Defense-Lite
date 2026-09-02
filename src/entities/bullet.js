@@ -8,7 +8,7 @@ export class Bullet {
     this.pivotX = data.pivotX;
     this.pivotY = data.pivotY;
     this.size = 10;
-    this.speed = 8;
+    this.speed = 4;
 
     this.velocityX = Math.cos(data.angle - Math.PI / 2) * this.speed;
     this.velocityY = Math.sin(data.angle - Math.PI / 2) * this.speed;

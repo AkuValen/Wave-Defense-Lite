@@ -6,13 +6,15 @@ export class Tower {
     this.atk = towerData.atk;
     this.firerate = towerData.firerate;
     this.range = towerData.range;
-    this.image = towerData.image;
 
+    this.image = towerData.image;
     this.pivotX = node.pivotX;
     this.pivotY = node.pivotY;
     this.angle = 0;
 
     this.target = null;
+
+    this.bullets = [];
 
     this.findNextTarget();
   }

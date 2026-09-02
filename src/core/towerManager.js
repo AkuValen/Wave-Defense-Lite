@@ -30,6 +30,22 @@ function updateBullet(game, tower) {
     ) {
       bullet.isActive = false;
     }
+
+    const activeEnemies = game.activeEnemies;
+
+    if (activeEnemies.length <= 0) return;
+
+    const closestEnemy = game.activeEnemies.reduce((closest, enemy) => {
+      return getDistance(enemy, bullet) < getDistance(closest, bullet) ? enemy : closest;
+    });
+
+    const isCollision =
+      getDistance(closestEnemy, bullet) <= closestEnemy.size / 2 + bullet.size / 2;
+
+    if (isCollision) {
+      closestEnemy.takeDamage(bullet);
+      bullet.isActive = false;
+    }
   });
 
   tower.bullets = bullets.filter((bullet) => bullet.isActive);
@@ -88,9 +104,9 @@ export function selectTower(game, index) {
   }
 }
 
-function getDistance(enemy, tower) {
-  const diffX = Math.abs(enemy.pivotX - tower.pivotX);
-  const diffY = Math.abs(enemy.pivotY - tower.pivotY);
+function getDistance(a, b) {
+  const diffX = Math.abs(a.pivotX - b.pivotX);
+  const diffY = Math.abs(a.pivotY - b.pivotY);
 
   return Math.sqrt(diffX ** 2 + diffY ** 2);
 }
@@ -101,15 +117,19 @@ function findNextTarget(game, tower) {
   const nodeSize = game.mapData.nodeSize;
   const towerMaxRange = tower.range * nodeSize + nodeSize / 2;
 
-  const inRangeEnemy = activeEnemies.filter((enemy) => {
-    return getDistance(enemy, tower) <= towerMaxRange;
-  });
+  // const inRangeEnemy = activeEnemies.filter((enemy) => {
+  //   return getDistance(enemy, tower) <= towerMaxRange;
+  // });
+  if (activeEnemies.length <= 0) return;
 
-  if (inRangeEnemy.length <= 0) return;
-
-  const newTarget = inRangeEnemy.reduce((closest, enemy) => {
+  const newTarget = activeEnemies.reduce((closest, enemy) => {
     return getDistance(enemy, tower) < getDistance(closest, tower) ? enemy : closest;
   });
+
+  const newTargetDistance = getDistance(newTarget, tower);
+
+  // if (inRangeEnemy.length <= 0) return;
+  if (newTargetDistance > towerMaxRange) return;
 
   tower.target = newTarget;
 }

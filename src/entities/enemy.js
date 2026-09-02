@@ -14,6 +14,10 @@ export class Enemy {
     this.nextNode;
   }
 
+  takeDamage(bullet) {
+    this.hp -= bullet.damage;
+  }
+
   move() {
     // const targetPivotX = this.nextNode.column * nodeSize - nodeSize / 2;
     // const targetPivotY = this.nextNode.row * nodeSize - nodeSize / 2;

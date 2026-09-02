@@ -2,7 +2,7 @@ import { Bullet } from "./bullet.js";
 
 export class Tower {
   constructor(game, towerData, node) {
-    // this.game = game;
+    this.game = game;
 
     this.name = towerData.name;
     this.atk = towerData.atk;
@@ -19,14 +19,16 @@ export class Tower {
     this.target = null;
 
     this.bullets = [];
-    this.isShoot = false;
+    this.cooldown = 0;
   }
 
   shoot() {
-    if (this.isShoot) return;
-    this.isShoot = true;
+    if (this.cooldown) {
+      this.cooldown--;
+      return;
+    }
 
-    const bullet = this.bullets.push(
+    this.bullets.push(
       new Bullet({
         atk: this.atk,
         pivotX: this.pivotX,
@@ -35,8 +37,9 @@ export class Tower {
       }),
     );
 
-    console.log(this.pivotX, this.pivotY);
-    console.log(bullet);
+    this.cooldown -= this.firerate;
+
+    if (this.game.time.tick) console.log(this.bullets);
   }
 
   aimAt() {

@@ -9,8 +9,6 @@ function renderBullet(tower, ctx) {
 
     ctx.translate(bullet.pivotX, bullet.pivotY);
 
-    console.log(bullet.pivotX, bullet.pivotY);
-
     ctx.drawImage(bulletImg, -bullet.size / 2, -bullet.size / 2, bullet.size, bullet.size);
     ctx.restore();
   });
@@ -142,7 +140,10 @@ export function updateTower(game) {
 
     if (tower.target) {
       tower.aimAt();
-      tower.shoot();
+
+      if (game.time.tick) {
+        tower.shoot();
+      }
 
       const nodeSize = game.mapData.nodeSize;
       const towerMaxRange = tower.range * nodeSize + nodeSize / 2;

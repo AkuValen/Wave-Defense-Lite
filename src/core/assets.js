@@ -1,5 +1,6 @@
 export let enemyData;
 export let towerData;
+export let bulletImg;
 
 async function fetchTower() {
   try {
@@ -36,7 +37,13 @@ async function fetchEnemy() {
   }
 }
 
+function preloadBullet() {
+  bulletImg = new Image();
+  bulletImg.src = "../../assets/img/bullet.png";
+}
+
 export async function configGameData() {
   await fetchEnemy();
   await fetchTower();
+  preloadBullet();
 }

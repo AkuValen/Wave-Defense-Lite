@@ -2,17 +2,24 @@ export class Bullet {
   constructor(data) {
     this.damage = data.atk;
 
+    console.log("Bullet: ", data);
+
     this.pivotX = data.pivotX;
     this.pivotY = data.pivotY;
+    this.size = 10;
+    this.speed = 4;
 
-    this.direction;
-    this.velocityX;
-    this.velocityY;
+    this.velocityX = Math.cos(data.angle - Math.PI / 2) * this.speed;
+    this.velocityY = Math.sin(data.angle - Math.PI / 2) * this.speed;
+
+    this.isActive = true;
   }
 
-  move() {}
+  move() {
+    this.pivotX += this.velocityX;
+    this.pivotY += this.velocityY;
 
-  update() {
-    this.move();
+    // console.log("Bullet Move: ");
+    // console.log(this);
   }
 }

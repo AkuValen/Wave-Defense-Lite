@@ -129,9 +129,8 @@ function generateMap(game) {
   }
 }
 
-export function drawMap(game) {
+export function renderMap(game, ctx) {
   const canvas = game.canvas;
-  const ctx = game.ctx;
 
   const row = game.mapData.row;
   const column = game.mapData.column;
@@ -167,12 +166,12 @@ export function updateMapScore(game) {
   setScore(game);
 }
 
-export function newMap(game) {
+export function newMap(game, ctx) {
   generateMap(game);
 
   setSpawn(game);
   setBase(game);
   setScore(game);
 
-  drawMap(game);
+  renderMap(game, ctx);
 }

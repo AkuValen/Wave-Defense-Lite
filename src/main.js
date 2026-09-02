@@ -1,14 +1,19 @@
 import { configGameData } from "./core/assets.js";
 import { InputHandler } from "./core/input.js";
 
-import { newMap, drawMap, updateMapScore } from "./map/map.js";
-import { spawnEnemy } from "./core/enemyManager.js";
-import { buildTower, selectTower, cancelBuild } from "./core/towerManager.js";
+import { newMap, renderMap, updateMapScore } from "./map/map.js";
+import { updateEnemy, renderEnemy, spawnEnemy } from "./core/enemyManager.js";
+import {
+  buildTower,
+  selectTower,
+  cancelBuild,
+  updateTower,
+  renderTower,
+} from "./core/towerManager.js";
 
 class Game {
   constructor() {
     this.canvas = document.getElementById("game-canvas");
-    this.ctx = this.canvas.getContext("2d");
 
     this.input = new InputHandler(this, (clickEvent) => this.click(clickEvent));
 
@@ -71,14 +76,19 @@ class Game {
     }
   }
 
-  start() {
-    newMap(this);
+  render() {
+    const ctx = this.canvas.getContext("2d");
+    ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
-    setTimeout(() => {
-      spawnEnemy(this);
-    }, 5000);
+    renderMap(this, ctx);
 
-    requestAnimationFrame(() => this.loop());
+    renderEnemy(this, ctx);
+    renderTower(this, ctx);
+  }
+
+  update() {
+    updateEnemy(this);
+    updateTower(this);
   }
 
   loop() {
@@ -94,52 +104,15 @@ class Game {
     requestAnimationFrame(() => this.loop());
   }
 
-  update() {
-    for (let enemy of this.activeEnemies) {
-      enemy.update();
-    }
+  start() {
+    const ctx = this.canvas.getContext("2d");
+    newMap(this, ctx);
 
-    for (let tower of this.activeTowers) {
-      tower.update();
-    }
+    setTimeout(() => {
+      spawnEnemy(this);
+    }, 5000);
 
-    this.activeEnemies = this.activeEnemies.filter((enemy) => enemy.hp > 0);
-  }
-
-  render() {
-    this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-
-    drawMap(this);
-
-    for (let enemy of this.activeEnemies) {
-      this.ctx.fillStyle = enemy.color;
-
-      this.ctx.beginPath();
-      this.ctx.arc(enemy.pivotX, enemy.pivotY, enemy.size, 0, Math.PI * 2);
-
-      this.ctx.fill();
-    }
-
-    for (let tower of this.activeTowers) {
-      this.ctx.save();
-
-      this.ctx.translate(tower.pivotX, tower.pivotY);
-
-      if (tower.target) {
-        const diffX = tower.target.pivotX - tower.pivotX;
-        const diffY = tower.target.pivotY - tower.pivotY;
-
-        tower.angle = Math.atan2(diffY, diffX) + Math.PI / 2;
-      }
-
-      this.ctx.rotate(tower.angle);
-
-      const towerSize = 40;
-
-      this.ctx.drawImage(tower.image, -towerSize / 2, -towerSize / 2, towerSize, towerSize);
-
-      this.ctx.restore();
-    }
+    requestAnimationFrame(() => this.loop());
   }
 }
 

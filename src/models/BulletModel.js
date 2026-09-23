@@ -1,12 +1,13 @@
-export class Bullet {
-  constructor(data) {
+export class BulletModel {
+  constructor(data, image) {
     // this.damage = data.atk;
-    this.damage = 100;
+    this.atk = 100;
+    this.speed = 4;
 
     this.pivotX = data.pivotX;
     this.pivotY = data.pivotY;
     this.size = 10;
-    this.speed = 4;
+    this.image = image;
 
     this.velocityX = Math.cos(data.angle - Math.PI / 2) * this.speed;
     this.velocityY = Math.sin(data.angle - Math.PI / 2) * this.speed;
@@ -17,8 +18,5 @@ export class Bullet {
   move() {
     this.pivotX += this.velocityX;
     this.pivotY += this.velocityY;
-
-    // console.log("Bullet Move: ");
-    // console.log(this);
   }
 }

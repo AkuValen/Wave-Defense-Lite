@@ -3,87 +3,28 @@
   padding: 0;
 }
 
+:root {
+  --control-panel-width: 300px;
+}
+
 body {
-  background: rgb(216, 233, 188);
+  position: relative;
+}
+
+#canvas-container {
+  position: absolute;
+  z-index: 1;
+  left: var(--control-panel-width);
+  width: calc(100vw - var(--control-panel-width));
   height: 100vh;
-  width: 100vw;
+  background-color: rgb(216, 233, 188);
 
   display: flex;
-  align-items: center;
   justify-content: center;
-  gap: 70px;
-}
-
-canvas {
-  border: 2px solid black;
-  background-color: white;
-  box-shadow: 0 0px 15px rgba(0, 0, 0, 0.5);
-}
-
-.sidebar {
-  height: 80%;
-  width: 350px;
-  border: 2px solid black;
-  background-color: #d2d2d2;
-  box-shadow: 0 0px 15px rgba(0, 0, 0, 0.5);
-}
-
-.status-area {
-  height: 130px;
-  background-color: rgb(172, 153, 107);
-
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-.status-area div {
-  display: flex;
   align-items: center;
 }
-.status-area h1 {
-  font-size: 30px;
-}
 
-.wave-area {
-  margin-left: 35px;
-
-  display: flex;
-  flex-direction: column;
-  /* background-color: aqua; */
-}
-.wave-counter {
-  font-size: 25px;
-  width: 75px;
-  border: 2px solid black;
-  border-radius: 15px;
-  background-color: rgb(227, 223, 147);
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.resource-area {
-  margin-right: 35px;
-
-  display: flex;
-  flex-direction: column;
-  background-color: aqua;
-}
-.resource-area div {
-  width: 85px;
-}
-
-.control-area ul {
-  list-style: none;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  padding-top: 10px;
-}
-.control-area div {
-  background-color: aquamarine;
-
-  height: 100px;
-  cursor: grab;
+#ui-container {
+  position: absolute;
+  z-index: 2;
 }

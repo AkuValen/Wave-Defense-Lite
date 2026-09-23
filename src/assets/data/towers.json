@@ -1,0 +1,50 @@
+{
+  "turret": {
+    "display_name": "Turret",
+    "attributes": {
+      "atk": 10,
+      "firerate": 2,
+      "range": 2,
+      "cost": 5
+    },
+    "assets": {
+      "image": "turret"
+    }
+  },
+  "gatling_gun": {
+    "display_name": "Gatling Gun",
+    "attributes": {
+      "atk": 10,
+      "firerate": 1,
+      "range": 15,
+      "cost": 99
+    },
+    "assets": {
+      "image": "gatling_gun"
+    }
+  },
+  "mud_pump": {
+    "display_name": "Mud Pump",
+    "attributes": {
+      "atk": 10,
+      "firerate": 1,
+      "range": 15,
+      "cost": 99
+    },
+    "assets": {
+      "image": "mud_pump"
+    }
+  },
+  "railgun": {
+    "display_name": "Railgun",
+    "attributes": {
+      "atk": 10,
+      "firerate": 1,
+      "range": 15,
+      "cost": 99
+    },
+    "assets": {
+      "image": "railgun"
+    }
+  }
+}

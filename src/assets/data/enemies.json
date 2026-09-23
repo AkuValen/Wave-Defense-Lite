@@ -1,0 +1,46 @@
+{
+  "weakling": {
+    "display_name": "Weakling",
+    "attributes": {
+      "max_health": 10,
+      "move_speed": 1
+    },
+    "assets": {
+      "scale": 15,
+      "color": "#f5db48"
+    }
+  },
+  "roamer": {
+    "display_name": "Roamer",
+    "attributes": {
+      "max_health": 15,
+      "move_speed": 2
+    },
+    "assets": {
+      "scale": 15,
+      "color": "#d06eb3"
+    }
+  },
+  "swift": {
+    "display_name": "Swift",
+    "attributes": {
+      "max_health": 10,
+      "move_speed": 4
+    },
+    "assets": {
+      "scale": 12,
+      "color": "#929291"
+    }
+  },
+  "tank": {
+    "display_name": "Tank",
+    "attributes": {
+      "max_health": 40,
+      "move_speed": 0.8
+    },
+    "assets": {
+      "scale": 20,
+      "color": "#5c472e"
+    }
+  }
+}

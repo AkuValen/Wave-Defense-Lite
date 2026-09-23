@@ -1,0 +1,61 @@
+.game-screen__map-board {
+  height: 500px;
+  width: 500px;
+  border: 2px solid black;
+}
+
+.game-screen__control-panel {
+  background-color: white;
+  height: 100vh;
+  border-right: 2px solid black;
+
+  .game-status {
+    background-color: rgb(172, 153, 107);
+    height: 130px;
+    width: var(--control-panel-width);
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    .game-status__left {
+      margin-left: 50px;
+
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    .game-status__right {
+      margin-right: 50px;
+
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+  }
+
+  .control-menu {
+    .tower-menu {
+      margin: 10px;
+
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+
+      .tower {
+        border: 2px solid black;
+        height: 100px;
+        background-color: aqua;
+
+        .tower-card {
+          /* width: 100%; */
+          height: 100%;
+
+          display: flex;
+          justify-content: center;
+          align-items: center;
+        }
+      }
+    }
+  }
+}

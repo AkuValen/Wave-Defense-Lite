@@ -41,8 +41,8 @@ export class GameScreen {
     this.statusContainer.innerHTML = `
       <div class="game-status">
         <div class="game-status__left">
-          <span>❤️<h3 id="heart">Heart</h3></span>
-          <span>🪙<h3 id="gold">Gold</h3></span>
+          <span>❤️<h3 id="game-status__heart">Heart</h3></span>
+          <span>🪙<h3 id="game-status__gold">Gold</h3></span>
         </div>
         <div class="game-status__right">
           <span><h3>wave</h3></span>

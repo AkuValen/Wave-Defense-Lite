@@ -20,16 +20,7 @@ export class BulletSystem {
 
   updateBullet(tower) {
     tower.activeBullets.forEach((bullet) => {
-      bullet.move();
-
-      if (
-        bullet.pivotX > this.game.canvas.width ||
-        bullet.pivotX < 0 ||
-        bullet.pivotY > this.game.canvas.height ||
-        bullet.pivotY < 0
-      ) {
-        bullet.isActive = false;
-      }
+      bullet.move(this.game);
 
       if (this.game.enemySystem.activeEnemies.length <= 0) return;
 
@@ -44,7 +35,7 @@ export class BulletSystem {
 
       if (isCollision) {
         closestEnemy.takeDamage(bullet);
-        bullet.isActive = false;
+        bullet.destroy();
       }
     });
 

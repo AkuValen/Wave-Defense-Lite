@@ -1,6 +1,7 @@
 import { Map } from "./world/Map.js";
 import { EnemySystem } from "./systems/EnemySystem.js";
 import { TowerSystem } from "./systems/TowerSystem.js";
+import { PlayerSystem } from "./systems/PlayerSystem.js";
 
 export class Game {
   constructor(app) {
@@ -20,9 +21,9 @@ export class Game {
 
     this.map = new Map(this);
 
-    this.playerSystem;
     this.enemySystem = new EnemySystem(this);
     this.towerSystem = new TowerSystem(this);
+    this.playerSystem = new PlayerSystem();
 
     this.loopId;
     this.#start();
@@ -39,9 +40,9 @@ export class Game {
       this.time.second++;
       this.time.tick = true;
       console.log("Second: ", this.time.second);
-      console.log(
-        `Total Enemy ${this.enemySystem.activeEnemies.length}, Tower ${this.towerSystem.activeTowers.length}`,
-      );
+      // console.log(
+      //   `Total Enemy ${this.enemySystem.activeEnemies.length}, Tower ${this.towerSystem.activeTowers.length}`,
+      // );
     } else {
       this.time.tick = false;
     }

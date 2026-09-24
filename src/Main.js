@@ -16,7 +16,6 @@ class App {
 
 window.addEventListener("load", async () => {
   try {
-    console.log("Masuk ke assetloader");
     await AssetsLoader.loadAsset();
 
     console.log("Images: ", AssetsLoader.images);

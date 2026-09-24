@@ -73,4 +73,8 @@ export class EnemyModel {
 
     if (this.health <= 0) this.isActive = false;
   }
+
+  destroy() {
+    this.isActive = false;
+  }
 }

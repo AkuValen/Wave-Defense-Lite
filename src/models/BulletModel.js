@@ -15,8 +15,21 @@ export class BulletModel {
     this.isActive = true;
   }
 
-  move() {
+  move(game) {
     this.pivotX += this.velocityX;
     this.pivotY += this.velocityY;
+
+    if (
+      this.pivotX > game.canvas.width ||
+      this.pivotX < 0 ||
+      this.pivotY > game.canvas.height ||
+      this.pivotY < 0
+    ) {
+      this.isActive = false;
+    }
+  }
+
+  destroy() {
+    this.isActive = false;
   }
 }

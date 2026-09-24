@@ -55,7 +55,6 @@ export class EnemySystem {
 
       if (enemy.currentNode.isBasepoint) {
         this.game.playerSystem.attackBase();
-        // enemy.attackBase(this.game.playerSystem.player);
         enemy.destroy();
       }
     });

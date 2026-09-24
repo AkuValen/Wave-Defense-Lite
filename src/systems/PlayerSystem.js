@@ -18,7 +18,11 @@ export class PlayerSystem {
 
   attackBase() {
     this.player.heart--;
-
     this.heartStatus.textContent = this.player.heart;
+  }
+
+  useGold(cost) {
+    this.player.gold -= cost;
+    this.goldStatus.textContent = this.player.gold;
   }
 }

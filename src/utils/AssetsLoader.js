@@ -2,7 +2,7 @@ const manifests = {
   images: {
     turret: "src/assets/img/turret.png",
     gatling_gun: "src/assets/img/gatling_gun.png",
-    mud_pump: "src/assets/img/mud_pump.png",
+    land_hammer: "src/assets/img/land_hammer.png",
     railgun: "src/assets/img/railgun.png",
     bullet: "src/assets/img/bullet.png",
   },

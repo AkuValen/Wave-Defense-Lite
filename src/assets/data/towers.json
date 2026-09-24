@@ -23,8 +23,8 @@
       "image": "gatling_gun"
     }
   },
-  "mud_pump": {
-    "display_name": "Mud Pump",
+  "land_hammer": {
+    "display_name": "Land Hammer",
     "attributes": {
       "atk": 10,
       "firerate": 1,
@@ -32,7 +32,7 @@
       "cost": 99
     },
     "assets": {
-      "image": "mud_pump"
+      "image": "land_hammer"
     }
   },
   "railgun": {

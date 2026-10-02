@@ -10,6 +10,7 @@ export class Map {
       spawnpoint: null,
     };
 
+    this.tempGrid = [];
     this.mapGrid = [];
   }
 
@@ -17,7 +18,9 @@ export class Map {
     this.#setMapNode();
     this.#setBase();
     this.#setSpawn();
-    this.setGridDistance();
+    if (this.#checkValidation()) {
+      this.#updateGridDistance();
+    }
   }
 
   #setMapNode() {
@@ -30,6 +33,9 @@ export class Map {
           column: c + 1,
           pivotX: this.nodeSize * c + this.nodeSize / 2,
           pivotY: this.nodeSize * r + this.nodeSize / 2,
+          isOccupied: false,
+          isBasepoint: false,
+          isSpawnpoint: false,
         };
       }
     }
@@ -70,17 +76,23 @@ export class Map {
     console.log("Spawnpoint: ", node);
   }
 
-  setGridDistance() {
+  #checkValidation(buildNode) {
+    this.tempGrid = structuredClone(this.mapGrid);
+
     for (let r = 0; r < this.mapData.row; r++) {
       for (let c = 0; c < this.mapData.column; c++) {
-        this.mapGrid[r][c].distance = null;
+        this.tempGrid[r][c].distance = null;
       }
     }
 
-    const basepoint = this.mapData.basepoint;
-    let openSet = [basepoint];
+    if (buildNode) {
+      this.tempGrid[buildNode.row - 1][buildNode.column - 1].isOccupied = true;
+    }
 
-    basepoint.distance = 0;
+    let openSet = [this.mapData.basepoint];
+    let isValid = false;
+
+    this.tempGrid[this.mapData.basepoint.row - 1][this.mapData.basepoint.column - 1].distance = 0;
 
     while (openSet.length > 0) {
       const currentNode = openSet.reduce((lowestNode, node) => {
@@ -101,20 +113,30 @@ export class Map {
           continue;
         }
 
-        const nNode = this.mapGrid[n.r - 1][n.c - 1];
+        const nNode = this.tempGrid[n.r - 1][n.c - 1];
 
         if (nNode.distance != null || nNode.isOccupied) {
           continue;
         }
 
         nNode.distance = currentNode.distance + 1;
+        if (nNode.isSpawnpoint) {
+          isValid = true;
+          console.log("Map valid");
+        }
 
         openSet.push(nNode);
       }
     }
 
-    const printScore = this.mapGrid.map((row) => row.map((node) => node.distance));
+    console.log("Cek valid: ");
+    const printScore = this.tempGrid.map((row) => row.map((node) => node.distance));
     console.table(printScore);
+    return isValid;
+  }
+
+  #updateGridDistance() {
+    this.mapGrid = this.tempGrid;
   }
 
   renderMap(canvas, ctx) {
@@ -145,16 +167,27 @@ export class Map {
   }
 
   mapClick(input) {
-    console.log("Menge-click map");
+    const clickedNode =
+      this.mapGrid[Math.ceil(input.isClick.y / this.nodeSize) - 1][
+        Math.ceil(input.isClick.x / this.nodeSize) - 1
+      ];
 
-    const row = Math.ceil(input.isClick.y / this.nodeSize);
-    const column = Math.ceil(input.isClick.x / this.nodeSize);
-
-    this.mapGrid[row - 1][column - 1].isOccupied = true;
+    console.log("Node: ", clickedNode);
 
     if (this.game.towerSystem.isSelectTower) {
-      this.game.towerSystem.build(this.mapGrid[row - 1][column - 1]);
-      this.setGridDistance();
+      if (clickedNode.isOccupied || clickedNode.isBasepoint || clickedNode.isSpawnpoint) {
+        console.log("Not placeable");
+        this.game.towerSystem.invalidBuild();
+        return;
+      }
+
+      if (this.#checkValidation(clickedNode)) {
+        this.#updateGridDistance();
+        this.game.towerSystem.build(clickedNode);
+      } else {
+        console.log("Not valid");
+        this.game.towerSystem.invalidBuild();
+      }
     }
   }
 }

@@ -10,18 +10,29 @@ export class TowerSystem {
   }
 
   select(tower) {
-    console.log("Memilih tower: ", tower);
+    const selectedTower = AssetsLoader.getTowerData(tower);
 
-    this.isSelectTower = AssetsLoader.getTowerData(tower);
+    console.log(selectedTower);
+    if (this.game.playerSystem.player.gold < selectedTower.attributes.cost) {
+      console.log("Tidak punya cukup gold");
+      return;
+    }
+
+    this.isSelectTower = selectedTower;
   }
 
   build(node) {
-    console.log("Membangun tower: ", this.isSelectTower);
     this.game.playerSystem.useGold(this.isSelectTower.attributes.cost);
+    node.isOccupied = true;
 
     const image = AssetsLoader.getTowerImage(this.isSelectTower.assets.image);
 
     this.activeTowers.push(new TowerModel(this.isSelectTower, node, image));
+    this.isSelectTower = null;
+  }
+
+  invalidBuild() {
+    console.log("Invalid membangun tower");
     this.isSelectTower = null;
   }
 

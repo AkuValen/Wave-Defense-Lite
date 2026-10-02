@@ -41,10 +41,7 @@ export class Game {
       this.timeAccumulator.accumulator -= 1000;
       this.time.second++;
       this.time.tick = true;
-      console.log("Second: ", this.time.second);
-      // console.log(
-      //   `Total Enemy ${this.enemySystem.activeEnemies.length}, Tower ${this.towerSystem.activeTowers.length}`,
-      // );
+      // console.log("Second: ", this.time.second);
     } else {
       this.time.tick = false;
     }

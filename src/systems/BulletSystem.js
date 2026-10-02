@@ -1,49 +1,50 @@
 import { BulletModel } from "../models/BulletModel.js";
 import { AssetsLoader } from "../utils/AssetsLoader.js";
+import { Bullet, Wave, Plasma } from "../models/TowerBulletModel.js";
 
 export class BulletSystem {
   constructor(game) {
     this.game = game;
+
     this.image = AssetsLoader.getBulletImage();
+
+    this.activeBullets = [];
   }
 
   createBullet(tower) {
-    return new BulletModel(tower, this.image);
+    let newBullet;
+    if (tower.bulletType == "bullet") {
+      newBullet = new Bullet(tower, this.image);
+    } else if (tower.bulletType == "wave") {
+      newBullet = new Wave(tower, this.image);
+    } else if (tower.bulletType == "plasma") {
+      newBullet = new Plasma(tower, this.image);
+    }
+    this.activeBullets.push(newBullet);
   }
 
-  #getDistance(a, b) {
-    const diffX = Math.abs(a.pivotX - b.pivotX);
-    const diffY = Math.abs(a.pivotY - b.pivotY);
+  updateBullet() {
+    if (this.activeBullets.length <= 0) return;
 
-    return Math.sqrt(diffX ** 2 + diffY ** 2);
-  }
-
-  updateBullet(tower) {
-    tower.activeBullets.forEach((bullet) => {
-      bullet.move(this.game);
+    this.activeBullets.forEach((bullet) => {
+      bullet.update(this.game);
 
       if (this.game.enemySystem.activeEnemies.length <= 0) return;
 
-      const closestEnemy = this.game.enemySystem.activeEnemies.reduce((closest, enemy) => {
-        return this.#getDistance(enemy, bullet) < this.#getDistance(closest, bullet)
-          ? enemy
-          : closest;
-      });
+      bullet.checkCollision(this.game);
 
-      const isCollision =
-        this.#getDistance(closestEnemy, bullet) <= closestEnemy.size + bullet.size / 2;
-
-      if (isCollision) {
-        closestEnemy.takeDamage(bullet);
-        bullet.destroy();
+      if (bullet.isCollision.length > 0) {
+        bullet.isCollision.forEach((enemy) => {
+          enemy.takeDamage(bullet);
+        });
       }
     });
 
-    tower.activeBullets = tower.activeBullets.filter((bullet) => bullet.isActive);
+    this.activeBullets = this.activeBullets.filter((bullet) => bullet.isActive);
   }
 
-  renderBullet(tower, ctx) {
-    tower.activeBullets.forEach((bullet) => {
+  renderBullet(ctx) {
+    this.activeBullets.forEach((bullet) => {
       ctx.save();
       ctx.translate(bullet.pivotX, bullet.pivotY);
 

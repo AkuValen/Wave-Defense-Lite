@@ -1,12 +1,11 @@
 export class BulletModel {
   constructor(data, image) {
-    // this.damage = data.atk;
-    this.atk = 100;
+    this.atk = data.atk;
     this.speed = 4;
 
     this.pivotX = data.pivotX;
     this.pivotY = data.pivotY;
-    this.size = 10;
+    this.size = 8;
     this.image = image;
 
     this.velocityX = Math.cos(data.angle - Math.PI / 2) * this.speed;

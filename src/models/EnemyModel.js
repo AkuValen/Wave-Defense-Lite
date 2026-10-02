@@ -70,6 +70,7 @@ export class EnemyModel {
 
   takeDamage(bullet) {
     this.health -= bullet.atk;
+    console.log(`Status musuh: ${this.health} (-${bullet.atk})`);
 
     if (this.health <= 0) this.isActive = false;
   }

@@ -2,6 +2,7 @@ import { Map } from "./world/Map.js";
 import { EnemySystem } from "./systems/EnemySystem.js";
 import { TowerSystem } from "./systems/TowerSystem.js";
 import { PlayerSystem } from "./systems/PlayerSystem.js";
+import { BulletSystem } from "./systems/BulletSystem.js";
 
 export class Game {
   constructor(app) {
@@ -23,6 +24,7 @@ export class Game {
 
     this.enemySystem = new EnemySystem(this);
     this.towerSystem = new TowerSystem(this);
+    this.bulletSystem = new BulletSystem(this);
     this.playerSystem = new PlayerSystem();
 
     this.loopId;
@@ -60,6 +62,7 @@ export class Game {
       this.#update();
       this.#render();
 
+      // if (this.time.tick && this.time.second == 3) this.enemySystem.spawn();
       if (this.time.tick) this.enemySystem.spawn();
 
       if (!this.app.isFocus) {
@@ -74,12 +77,14 @@ export class Game {
   #update() {
     this.enemySystem.updateEnemy();
     this.towerSystem.updateTower();
+    this.bulletSystem.updateBullet();
   }
 
   #render() {
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
     this.map.renderMap(this.canvas, this.ctx);
+    this.bulletSystem.renderBullet(this.ctx);
     this.enemySystem.renderEnemy(this.ctx);
     this.towerSystem.renderTower(this.ctx);
   }

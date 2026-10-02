@@ -2,10 +2,12 @@
   "turret": {
     "display_name": "Turret",
     "attributes": {
-      "atk": 10,
-      "firerate": 2,
+      "atk": 0,
+      "bullet": 1,
+      "cooldown": 2,
       "range": 2,
-      "cost": 5
+      "cost": 5,
+      "bullet_type": "bullet"
     },
     "assets": {
       "image": "turret"
@@ -14,10 +16,12 @@
   "gatling_gun": {
     "display_name": "Gatling Gun",
     "attributes": {
-      "atk": 10,
-      "firerate": 1,
-      "range": 15,
-      "cost": 99
+      "atk": 5,
+      "bullet": 5,
+      "cooldown": 2,
+      "range": 2,
+      "cost": 10,
+      "bullet_type": "bullet"
     },
     "assets": {
       "image": "gatling_gun"
@@ -26,10 +30,12 @@
   "land_hammer": {
     "display_name": "Land Hammer",
     "attributes": {
-      "atk": 10,
-      "firerate": 1,
-      "range": 15,
-      "cost": 99
+      "atk": 20,
+      "bullet": 1,
+      "cooldown": 5,
+      "range": 1,
+      "cost": 20,
+      "bullet_type": "wave"
     },
     "assets": {
       "image": "land_hammer"
@@ -38,10 +44,12 @@
   "railgun": {
     "display_name": "Railgun",
     "attributes": {
-      "atk": 10,
-      "firerate": 1,
-      "range": 15,
-      "cost": 99
+      "atk": 20,
+      "bullet": 1,
+      "cooldown": 10,
+      "range": 5,
+      "cost": 99,
+      "bullet_type": "plasma"
     },
     "assets": {
       "image": "railgun"

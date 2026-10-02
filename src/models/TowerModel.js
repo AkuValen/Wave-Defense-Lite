@@ -2,22 +2,26 @@ export class TowerModel {
   constructor(data, node, image) {
     this.name = data.display_name;
 
+    // Atribut
     this.atk = data.attributes.atk;
-    this.firerate = data.attributes.firerate;
     this.range = data.attributes.range;
+    this.bullet = data.attributes.bullet;
+    this.maxBullet = data.attributes.bullet;
+    this.cooldown = data.attributes.cooldown;
+    this.bulletType = data.attributes.bullet_type;
 
+    // Posisi
     this.pivotX = node.pivotX;
     this.pivotY = node.pivotY;
 
+    // Asset
     this.image = image;
     this.angle = 0;
     this.size = 40;
 
+    // Status
     this.target = null;
-
-    this.activeBullets = [];
-    this.bullets = 0;
-    this.cooldown = 0;
+    this.reloadCountDown = 0;
   }
 
   #getDistance(a, b) {
@@ -41,7 +45,7 @@ export class TowerModel {
     this.target = this.#getDistance(closestTarget, this) <= towerMaxRange ? closestTarget : null;
   }
 
-  aimAt() {
+  aimTarget() {
     const deltaX = this.target.pivotX - this.pivotX;
     const deltaY = this.target.pivotY - this.pivotY;
 
@@ -57,12 +61,17 @@ export class TowerModel {
     }
   }
 
-  shoot(bullet) {
-    this.activeBullets.push(bullet);
-    this.cooldown = this.firerate;
+  shoot() {
+    this.bullet--;
+    if (this.bullet <= 0) {
+      this.reloadCountDown = this.cooldown;
+    }
   }
 
   reload() {
-    this.cooldown--;
+    this.reloadCountDown--;
+    if (this.reloadCountDown <= 0) {
+      this.bullet = this.maxBullet;
+    }
   }
 }

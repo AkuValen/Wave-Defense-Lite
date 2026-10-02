@@ -23,7 +23,6 @@ export class TowerSystem {
 
   build(node) {
     this.game.playerSystem.useGold(this.isSelectTower.attributes.cost);
-    node.isOccupied = true;
 
     const image = AssetsLoader.getTowerImage(this.isSelectTower.assets.image);
 

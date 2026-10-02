@@ -1,4 +1,3 @@
-import { BulletModel } from "../models/BulletModel.js";
 import { AssetsLoader } from "../utils/AssetsLoader.js";
 import { Bullet, Wave, Plasma } from "../models/TowerBulletModel.js";
 

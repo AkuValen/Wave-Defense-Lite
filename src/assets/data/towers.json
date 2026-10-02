@@ -2,7 +2,7 @@
   "turret": {
     "display_name": "Turret",
     "attributes": {
-      "atk": 0,
+      "atk": 10,
       "bullet": 1,
       "cooldown": 2,
       "range": 2,
